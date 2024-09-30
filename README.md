@@ -1,4 +1,4 @@
-# sdp_daka
+# Plantilla de dashboard con tailwind Css
 
 This template should help get you started developing with Vue 3 in Vite.
 
