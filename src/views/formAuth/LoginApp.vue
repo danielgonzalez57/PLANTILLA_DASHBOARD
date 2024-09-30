@@ -10,6 +10,8 @@ const password = ref<string>('');
 const remenberMe = ref<boolean>(false);
 const storedEmail = useLocalStorage('Email', '');
 const storedPassword = useLocalStorage('Password', '');
+const emailError = ref<string | null>(null);
+const passwordError = ref<string | null>(null);
 
 const authStore = useAuthStore();
 
@@ -34,14 +36,30 @@ const useLocalStorageAuthentication = () => {
   }
 }
 
+const validateEmail = (email: string) => {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+};
+
 const handleLogin = async () => {
-  useLocalStorageAuthentication();
-  authStore.clearError(); // Limpiar errores anteriores
-  if (username.value && password.value) {
+  emailError.value = null;
+  passwordError.value = null;
+
+  if (!validateEmail(username.value)) {
+    emailError.value = 'Correo electrónico no válido';
+  }
+
+  if (!password.value) {
+    passwordError.value = 'La contraseña no puede estar vacía';
+  }
+
+  if (!emailError.value && !passwordError.value) {
+    useLocalStorageAuthentication();
+    authStore.clearError(); // Limpiar errores anteriores
     try {
       await authStore.login({ Email: username.value, Password: password.value });
     } catch (error) {
-      console.log('error')
+      console.log('error');
     }
   }
 };
@@ -68,30 +86,55 @@ const handleLogin = async () => {
           <form @submit.prevent="handleLogin" class="mt-8 space-y-6">
             <div class="rounded-md shadow-sm">
               <div>
-                <label for="email" class="block mb-2 text-sm font-medium text-white">Correo Electronico</label>
+
+                <label 
+                  for="email" 
+                  class="block mb-2 text-sm font-medium text-white">
+                    Correo Electronico
+                </label>
+
                 <input
-                v-model="username"
+                  v-model="username"
                   placeholder="ejemplo@tiendasdaka.com"
+                  :class="{'border-red-500  text-red-900 placeholder-red-700': emailError}"
                   class="appearance-none relative block w-full px-3 py-3 border border-gray-700 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  required
                   autocomplete="email"
-                  type="email"
+                  type="text"
                   name="email"
                   id="email"
                 />
+
+                <p v-if="emailError" 
+                class="mt-2 text-sm text-red-600 dark:text-red-500">
+                  <span class="font-medium"></span> {{ emailError }}
+                </p>
+
               </div>
               <div class="mt-4">
-                <label for="email" class="block mb-2 text-sm font-medium text-white">Contraseña</label>
+
+                <label 
+                  for="email" 
+                  class="block mb-2 text-sm font-medium text-white">
+                  Contraseña
+                </label>
+
                 <input
                 v-model="password"
                   placeholder="123456"
+                  :class="{'border-red-500  text-red-900 placeholder-red-700': passwordError}"
                   class="appearance-none relative block w-full px-3 py-3 border border-gray-700 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  required
                   autocomplete="current-password"
                   type="password"
                   name="password"
                   id="password"
                 />
+
+                <p 
+                  v-if="passwordError" 
+                  class="mt-2 text-sm text-red-600 dark:text-red-500">
+                  <span class="font-medium"></span> {{ passwordError }}
+                </p>
+
               </div>
             </div>
 
@@ -106,14 +149,6 @@ const handleLogin = async () => {
                 <label for="yellow-checkbox" class="ml-2 text-sm font-medium text-gray-400 dark:text-gray-300">Recordar</label>
               </div>
 
-              <!-- <div class="text-sm">
-                <RouterLink
-                  class="font-medium text-blue-600 hover:text-blue-500"
-                  to="#"
-                >
-                  Olvide mi contraseña
-                </RouterLink>
-              </div> -->
             </div>
 
             <!-- bottom -->
@@ -138,7 +173,7 @@ const handleLogin = async () => {
               </div>
             </div>
           </form>
-        </div>
+        </div>  
         <!-- footer login -->
         <div class="px-8 py-4 bg-gray-700 text-center">
           <span class="text-gray-400">All Rights Reserved</span>
