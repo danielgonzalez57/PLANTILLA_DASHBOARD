@@ -1,10 +1,15 @@
 import { defineStore } from 'pinia';
 import router from '@/router';
+import axios from 'axios';
 
+const dataBaseUrl = `${import.meta.env.VITE_URL}/auth`;
+ 
 interface User {
-  id: number;
-  name: string;
-  email: string;
+  ID_User: number;
+  Nombre: string;
+  Email: string;
+  ID_Rol: number;
+  Token: string;
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -15,26 +20,35 @@ export const useAuthStore = defineStore('auth', {
   }),
   actions: {
     async login({ Email, Password }: { Email: string, Password: string }) {
-      
-      const validEmail = 'dan.gonzalez@tiendasdaka.com';
-      const validPassword = '123456';
+      try {
+        const response = await axios.post(`${dataBaseUrl}/login`, { Email, Password });
+    
+        if (response.data) {
+          this.user = response.data;
+          localStorage.setItem('user', JSON.stringify(this.user));
+          router.push(this.returnUrl || '/dashboard');
+        } else {
+          this.setError('Usuario o contraseña incorrectas');
+        }
+      } catch (error) {
+        
+        if (error instanceof Error) {
 
-      if (Email === validEmail && Password === validPassword) {
-
-        const user = { id: 1, name: 'Dan Gonzalez', email: Email };
-        this.user = user;
-        localStorage.setItem('user', JSON.stringify(user));
-        router.push(this.returnUrl || '/dashboard');
-
-      } else {
-
-        this.error = 'Usuario o contraseña incorrectas'
-
-        setTimeout(() => {
-          this.error = ''
-        }, 6000);
-
+          if (axios.isAxiosError(error) && error.response && error.response.status === 403) {
+            this.setError('Usuario o contraseña incorrectas');
+          } else {
+            this.setError('Error al intentar iniciar sesión');
+          }
+        } else {
+          this.setError('Error desconocido');
+        }
       }
+    },
+    setError(message: string) {
+      this.error = message;
+      setTimeout(() => {
+        this.error = '';
+      }, 6000);
     },
     clearError() {
       this.error = '';

@@ -12,12 +12,18 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@primevue/themes": "^4.2.2",
     "@vueuse/core": "^11.1.0",
+    "axios": "^1.7.7",
     "flowbite": "^2.5.1",
     "pinia": "^2.1.7",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.2.4",
     "simple-datatables": "^9.1.0",
+    "vee-validate": "^4.14.7",
     "vue": "^3.4.29",
-    "vue-router": "^4.3.3"
+    "vue-router": "^4.3.3",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",

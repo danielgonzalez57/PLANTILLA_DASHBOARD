@@ -59,8 +59,8 @@ const handleLogout = () => {
                     </button>
 
                     <!-- Logo -->
-                    <RouterLink to="/" class="flex ms-2 md:me-24">
-                        <img src="@/assets/img/logo2.png" class="h-8 me-3" alt="FlowBite Logo" />
+                    <RouterLink to="/dashboard" class="flex ms-2 md:me-24">
+                        <img src="@/assets/img/dakaCamion.png" class="h-9 me-3" alt="FlowBite Logo" />
                         <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">Sugerido de Pedidos</span>
                     </RouterLink>
                 </div>
